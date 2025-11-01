@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title> Sister's Birthday </title>
-    <!-- CSS Styles for the 3D birthday room -->
     <style>
       /* Move @import to the top */
       @import url("https://fonts.googleapis.com/css?family=Nobile");
@@ -1030,7 +1029,7 @@
         }
         .stage {
           perspective: 800px;
-          height: 55vh;
+          height: 100vh;
         }
         .room {
           transform: rotateX(10deg) rotateY(-45deg) translateY(-10px) scale(0.9);
@@ -1680,7 +1679,7 @@
       aria-label="Phát hoặc dừng nhạc nền sinh nhật"
       title="Click để phát/dừng nhạc nền"
     >
-      🎵 Nhạc
+      Swipe Up 
     </button>
 
     <!-- Thêm audio ở đây (đặt trước script) để script có thể truy xuất phần tử ngay khi chạy -->
@@ -1794,10 +1793,10 @@
         musicBtn.addEventListener("click", () => {
           if (bgm.paused) {
             bgm.play();
-            musicBtn.textContent = "⏸️ Dừng";
+            musicBtn.textContent = "Stop";
           } else {
             bgm.pause();
-            musicBtn.textContent = "🎵 Nhạc";
+            musicBtn.textContent = "Swipe Up";
           }
         });
       })();
@@ -1993,4 +1992,5 @@
     <!-- audio đã được di chuyển lên phía trên nút và script -->
   </body>
 </html>
+
 
