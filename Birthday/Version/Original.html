@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Phòng sinh nhật 3D - Lộng lẫy vàng sáng</title>
+    <!-- CSS Styles for the 3D birthday room -->
+    <style>
+      /* Move @import to the top */
+      @import url("https://fonts.googleapis.com/css?family=Nobile");
+
+      /* Định nghĩa các biến CSS chính cho kích thước và màu sắc của phòng */
+      :root {
+        --size: 360px; /* Kích thước cơ bản của phòng */
+        --depth: 360px; /* Độ sâu của phòng */
+        --accent: #f7f24a; /* Màu chủ đạo 1 */
+        --accent2: #f7d302; /* Màu chủ đạo 2 */
+        --wall: #fff7c9; /* Màu tường */
+        --floor: #fff0a8; /* Màu sàn */
+      }
+
+      /* Thiết lập cơ bản cho trang */
+      html,
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(
+          180deg,
+          #fffce4,
+          #fff5c0
+        ); /* Gradient nền */
+        font-family: Inter, system-ui, Arial;
+        overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+      }
+      * {
+        box-sizing: border-box;
+        touch-action: none; /* Vô hiệu hóa các hành động chạm mặc định */
+        /* Add Safari compatibility for user-select if needed; assuming none, but prefix touch-action if required */
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* Container chính cho scene 3D */
+      .stage {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1000px; /* Thiết lập góc nhìn 3D */
+        padding: 16px;
+      }
+      /* Container cho phòng sinh nhật */
+      .room-wrap {
+        width: var(--size);
+        height: var(--size);
+        position: relative;
+      }
+      /* Phòng 3D với hiệu ứng transform */
+      .room {
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d; /* Duy trì hiệu ứng 3D cho các phần tử con */
+        transform: rotateX(10deg) rotateY(-45deg) translateY(-20px); /* Góc nhìn mặc định */
+        transition: transform 0.08s linear; /* Hiệu ứng chuyển động mượt */
+      }
+
+      /* Thiết lập chung cho tường và sàn */
+      .wall,
+      .floor {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform-style: preserve-3d;
+        border: 2px solid rgba(0, 0, 0, 0.06); /* Viền mỏng tạo độ sâu */
+      }
+
+      /* Tường phía sau */
+      .back {
+        width: var(--size);
+        height: var(--size);
+        background: linear-gradient(
+          180deg,
+          var(--wall),
+          #fff3b0
+        ); /* Gradient tường */
+        transform: translate(-50%, -50%) translateZ(calc(var(--depth) / -2)); /* Đẩy về phía sau */
+        box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.08); /* Bóng trong tạo độ sâu */
+      }
+      /* Tường bên trái */
+      .left {
+        width: calc(var(--depth));
+        height: var(--size);
+        background: linear-gradient(
+          90deg,
+          #fff8b8,
+          #ffec84
+        ); /* Gradient tường */
+        transform: translate(-50%, -50%) rotateY(90deg)
+          translateZ(calc(var(--size) / -2)); /* Xoay và định vị */
+      }
+
+      /* Sàn phòng */
+      .floor {
+        width: var(--size);
+        height: calc(var(--depth));
+        background: linear-gradient(
+          180deg,
+          var(--floor),
+          #ffe59a
+        ); /* Gradient sàn */
+        transform: translate(-50%, -50%) rotateX(-90deg)
+          translateZ(calc(var(--size) / 2)); /* Xoay nằm ngang và định vị */
+        box-shadow: inset 0 30px 80px rgba(0, 0, 0, 0.12); /* Bóng tạo độ sâu */
+      }
+
+      .decor-item {
+        transform-style: preserve-3d;
+      }
+      .cake,
+      .balloon,
+      .flower {
+        transform: rotateY(45deg);
+      }
+
+      /* Carousel ảnh xoay - Tăng kích thước và di chuyển đến giữa phòng để xoay xung quanh */
+      .photo-carousel {
+        position: absolute;
+        left: 50%;
+        top: 80%; /* Di chuyển từ top: 5% xuống top: 50% để ở giữa phòng */
+        width: 400px; /* Tăng từ 300px lên 350px để lớn hơn */
+        height: 600px; /* Tăng từ 300px lên 350px */
+        transform: translate(-50%, -50%) rotateY(45deg); /* Giữ góc nhìn ban đầu */
+        transform-style: preserve-3d; /* Duy trì 3D cho các khung ảnh */
+        animation: rotateAroundRoom 25s linear infinite; /* Thay đổi animation để xoay xung quanh phòng */
+        z-index: 15;
+      }
+      /* Hiệu ứng xoay 360 độ quanh phòng - Thêm nhẹ rotateX để tạo quỹ đạo xoắn ốc nhẹ */
+      @keyframes rotateAroundRoom {
+        from {
+          transform: translate(-50%, -50%) rotateY(0deg) rotateX(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotateY(360deg) rotateX(5deg); /* Thêm rotateX nhẹ để không phẳng */
+        }
+      }
+      .photo-frame {
+        position: absolute;
+        width: 200px; /* Tăng từ 80px lên 100px */
+        height: 180px; /* Tăng từ 70px lên 80px */
+        background: rgba(255, 255, 255, 0.8);
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px; /* Tăng từ 12px lên 14px */
+        color: #333;
+        text-align: center;
+        cursor: pointer;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      .photo-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .photo-frame input {
+        display: none;
+      }
+
+      .photo-frame:nth-child(1) {
+        --angle: 0deg;
+      }
+      .photo-frame:nth-child(2) {
+        --angle: 36deg;
+      }
+      .photo-frame:nth-child(3) {
+        --angle: 72deg;
+      }
+      .photo-frame:nth-child(4) {
+        --angle: 108deg;
+      }
+      .photo-frame:nth-child(5) {
+        --angle: 144deg;
+      }
+      .photo-frame:nth-child(6) {
+        --angle: 180deg;
+      }
+      .photo-frame:nth-child(7) {
+        --angle: 216deg;
+      }
+      .photo-frame:nth-child(8) {
+        --angle: 252deg;
+      }
+      .photo-frame:nth-child(9) {
+        --angle: 288deg;
+      }
+      .photo-frame:nth-child(10) {
+        --angle: 324deg;
+      }
+      .photo-frame {
+        transform: rotateY(var(--angle)) translateZ(320px); /* Tăng translateZ từ 150px lên 175px để bán kính lớn hơn, tạo cảm giác bay quanh rộng hơn */
+      }
+
+      .backdrop {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        height: 90%;
+        background: radial-gradient(
+          circle at center,
+          rgba(255, 249, 190, 0.8),
+          rgba(255, 244, 150, 0.4)
+        );
+        border-radius: 20px;
+        filter: blur(2px);
+        z-index: 10;
+      }
+      .garland {
+        position: absolute;
+        top: 4%;
+        left: 5%;
+        width: 90%;
+        height: 20px;
+        display: flex;
+        justify-content: space-between;
+        z-index: 35;
+      }
+      .flag {
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+      }
+      .flag:nth-child(even) {
+        background: var(--accent2);
+      }
+      .fairy-light {
+        position: absolute;
+        top: 6%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: repeating-linear-gradient(
+          90deg,
+          rgba(255, 220, 120, 0.7) 0 10px,
+          transparent 10px 20px
+        );
+        box-shadow: 0 0 14px rgba(255, 230, 140, 0.6);
+        z-index: 30;
+      }
+
+      /* THÊM: Đèn LED nhấp nháy dọc theo garland */
+      .led-light {
+        position: absolute;
+        top: 4%;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        z-index: 36;
+      }
+      .led {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 10px rgba(247, 242, 74, 0.8);
+        animation: blink 2s infinite alternate;
+        /* Optimize: Use transform for scale */
+        transform-origin: center;
+      }
+      .led:nth-child(odd) {
+        animation-delay: 0.5s;
+      }
+      .led:nth-child(even) {
+        background: var(--accent2);
+        animation-delay: 1s;
+      }
+      @keyframes blink {
+        0% {
+          opacity: 0.5;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+      }
+
+      .flower {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #fff6e0, #ffc8c8 70%);
+        box-shadow: 0 0 8px rgba(255, 100, 100, 0.4);
+        z-index: 40;
+      }
+      .f1 {
+        left: 10%;
+        bottom: 20%;
+      }
+      .f2 {
+        right: 10%;
+        bottom: 22%;
+      }
+      .f3 {
+        left: 50%;
+        bottom: 12%;
+        transform: translateX(-50%) rotateY(45deg);
+      }
+
+      /* Hiệu ứng pháo hoa cơ bản */
+      .firework {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #fff4b8;
+        animation: burst 1.8s infinite ease-out; /* Hiệu ứng nổ liên tục */
+        z-index: 50;
+      }
+      /* Hiệu ứng nổ pháo hoa */
+      @keyframes burst {
+        0% {
+          transform: scale(0); /* Bắt đầu từ điểm nhỏ */
+          opacity: 1;
+        }
+        80% {
+          transform: scale(10); /* Phình to ra */
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 0; /* Mờ dần và biến mất */
+        }
+      }
+      /* Pháo hoa nâng cao với nhiều hạt và màu sắc */
+      /* Container cho pháo hoa */
+      .firework-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none; /* Cho phép click xuyên qua */
+        z-index: 55;
+      }
+      /* Từng hạt pháo hoa */
+      .firework-particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          #fff4b8,
+          #f7d302
+        ); /* Gradient cho hạt */
+        animation: firework-explode 2s infinite ease-out;
+      }
+      /* Hiệu ứng nổ cho từng hạt */
+      @keyframes firework-explode {
+        0% {
+          transform: scale(0) translate(0, 0); /* Bắt đầu từ tâm */
+          opacity: 1;
+        }
+        50% {
+          opacity: 1; /* Giữ độ sáng giữa chừng */
+        }
+        100% {
+          transform: scale(1) translate(var(--dx), var(--dy)); /* Bay ra theo hướng ngẫu nhiên */
+          opacity: 0; /* Mờ dần và biến mất */
+        }
+      }
+
+      .banner {
+        position: absolute;
+        left: 50%;
+        bottom: -120%; /* Di chuyển từ top: 8% xuống bottom: 10% để ở phía dưới phòng */
+        transform: translateX(-50%) rotateY(45deg);
+        z-index: 45;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-weight: 800;
+        color: #0b1220;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+        position: relative;
+        overflow: hidden;
+        animation: bounce 3s ease-in-out infinite;
+      }
+
+      .banner::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transform: rotate(45deg);
+        animation: shimmer 3s linear infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(100%) rotate(45deg);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateX(-50%) rotateY(45deg) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) rotateY(45deg) translateY(-10px);
+        }
+      }
+
+      /* Bánh sinh nhật */
+      .cake {
+        position: absolute;
+        left: 50%;
+        bottom: 18%;
+        transform: translateX(-50%) rotateY(45deg); /* Xoay bánh theo góc nhìn */
+        z-index: 25;
+      }
+      /* Các lớp bánh */
+      .cake .layer {
+        width: 120px;
+        height: 34px;
+        border-radius: 14px;
+        background: #ffd7a8; /* Màu bánh */
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2); /* Bóng tạo độ nổi */
+        margin-top: -12px;
+        position: relative;
+      }
+      /* Kem trang trí */
+      .cake .cream {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: -10px;
+        height: 18px;
+        background: linear-gradient(
+          180deg,
+          #fff6f0,
+          #ffecd9
+        ); /* Gradient kem */
+        border-radius: 10px;
+      }
+      /* Nến sinh nhật */
+      .candle {
+        position: absolute;
+        left: 50%;
+        top: -38px;
+        transform: translateX(-50%);
+        width: 6px;
+        height: 32px;
+        background: #ff6b6b; /* Màu nến */
+        border-radius: 3px;
+      }
+      /* Ngọn lửa nến */
+      .flame {
+        position: absolute;
+        left: 50%;
+        top: -52px;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 16px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          #fff,
+          #ffd966 35%,
+          #ff8c42 70%
+        );
+        filter: blur(0.5px);
+        animation: flicker 1s ease-in-out infinite alternate;
+        /* Optimize: Use transform for scale */
+        transform-origin: center;
+      }
+
+      @keyframes flicker {
+        0%,
+        100% {
+          transform: translateX(-50%) scale(1);
+          filter: blur(0.5px) brightness(1);
+        }
+        50% {
+          transform: translateX(-50%) scale(1.1);
+          filter: blur(1px) brightness(1.2);
+        }
+      }
+
+      /* Thêm hiệu ứng glow cho nến */
+      .flame::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle at center,
+          rgba(255, 217, 102, 0.4),
+          transparent 70%
+        );
+        animation: glow-flame 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes glow-flame {
+        0% {
+          opacity: 0.5;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+      }
+
+      .balloon {
+        position: absolute;
+        width: 48px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        z-index: 24;
+        animation: float 4s ease-in-out infinite alternate;
+        transform: rotateY(45deg);
+      }
+      .balloon::after {
+        content: "";
+        position: absolute;
+        width: 2px;
+        height: 28px;
+        background: rgba(0, 0, 0, 0.15);
+        bottom: -24px;
+      }
+      .b1 {
+        left: 15%;
+        top: 20%;
+        background: linear-gradient(180deg, #ff9a9a, #ff6b6b);
+      }
+      .b2 {
+        right: 15%;
+        top: 18%;
+        background: linear-gradient(180deg, #a1c4fd, #c2e9fb);
+      }
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotateY(45deg);
+        }
+        100% {
+          transform: translateY(-12px) rotateY(45deg);
+        }
+      }
+      /* Bóng bay bổ sung */
+      .balloon.b3 {
+        left: 8%;
+        top: 35%;
+        background: linear-gradient(180deg, #ffd700, #ffed4e);
+        animation-delay: 1s;
+      }
+      .balloon.b4 {
+        right: 8%;
+        top: 40%;
+        background: linear-gradient(180deg, #ff69b4, #ff1493);
+        animation-delay: 2s;
+      }
+      .balloon.b5 {
+        left: 75%;
+        top: 25%;
+        background: linear-gradient(180deg, #98fb98, #32cd32);
+        animation-delay: 0.5s;
+      }
+
+      .frame {
+        position: absolute;
+        width: 110px;
+        height: 86px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 4px solid rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 28;
+      }
+      .frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .frame input {
+        display: none;
+      }
+      .frame .ph {
+        color: #333;
+        font-size: 13px;
+        padding: 6px;
+        text-align: center;
+      }
+      .back .frame {
+        left: 50%;
+        top: 34%;
+        transform: translate(-50%, -50%) rotateY(0deg);
+      }
+      .left .frame {
+        left: 24%;
+        top: 46%;
+        transform: translate(-50%, -50%) rotateY(0deg);
+      }
+
+      .light {
+        position: absolute;
+        left: 50%;
+        top: 40%;
+        width: 600px;
+        height: 600px;
+        transform: translate(-50%, -50%) rotateY(45deg);
+        pointer-events: none;
+        background: radial-gradient(
+          circle at 50% 30%,
+          rgba(255, 246, 200, 0.45),
+          rgba(255, 230, 140, 0.12) 25%,
+          transparent 60%
+        );
+        z-index: 22;
+        animation: glow 3s ease-in-out infinite alternate,
+          rotate-light 20s linear infinite;
+      }
+
+      @keyframes rotate-light {
+        from {
+          background: radial-gradient(
+            circle at 30% 30%,
+            rgba(255, 246, 200, 0.45),
+            rgba(255, 230, 140, 0.12) 25%,
+            transparent 60%
+          );
+        }
+        50% {
+          background: radial-gradient(
+            circle at 70% 70%,
+            rgba(255, 246, 200, 0.45),
+            rgba(255, 230, 140, 0.12) 25%,
+            transparent 60%
+          );
+        }
+        to {
+          background: radial-gradient(
+            circle at 30% 30%,
+            rgba(255, 246, 200, 0.45),
+            rgba(255, 230, 140, 0.12) 25%,
+            transparent 60%
+          );
+        }
+      }
+
+      /* THÊM: Hiệu ứng glow nhấp nháy */
+      @keyframes glow {
+        0% {
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* Hiệu ứng bong bóng nổi */
+      .bubble {
+        position: absolute;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(255, 255, 255, 0.8),
+          rgba(255, 255, 255, 0.2)
+        );
+        border-radius: 50%;
+        animation: float-bubble 6s ease-in-out infinite;
+        z-index: 25;
+      }
+      @keyframes float-bubble {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0);
+          opacity: 0;
+        }
+        50% {
+          transform: translateY(-100px) translateX(20px);
+          opacity: 0.6;
+        }
+      }
+
+      /* THÊM: Hiệu ứng sao lấp lánh */
+      .sparkle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: #fff;
+        border-radius: 50%;
+        animation: sparkle 1.5s infinite ease-in-out;
+        z-index: 60;
+        /* Optimize: Use transform for scale */
+        transform-origin: center;
+      }
+      @keyframes sparkle {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(0);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* THÊM: Confetti rơi nhẹ - Optimize with transform */
+      .confetti {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        animation: confetti-fall 3s linear infinite;
+        z-index: 45;
+        transform-origin: center;
+      }
+      @keyframes confetti-fall {
+        0% {
+          transform: translateY(-100%) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+      .music {
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        padding: 10px 14px;
+        border-radius: 999px;
+        color: #071022;
+        font-weight: 800;
+        border: none;
+        z-index: 100;
+        cursor: pointer;
+      }
+
+      /* 🔧 FIX: hiển thị chuẩn trên mobile */
+      @media (max-width: 520px) {
+        :root {
+          --size: 240px;
+          --depth: 240px;
+        }
+        .stage {
+          perspective: 800px;
+          height: 55vh;
+        }
+        .room {
+          transform: rotateX(10deg) rotateY(-45deg) translateY(-10px) scale(0.9);
+        }
+        /* Điều chỉnh carousel cho mobile */
+        .photo-carousel {
+          width: 500px;
+          height: 500px;
+          top: 70%;
+        }
+        .photo-frame {
+          width: 160px;
+          height: 180px;
+          font-size: 10px;
+        }
+      }
+
+      /* Card Styles - Adjusted for golden theme and responsiveness */
+      .card-section {
+        padding: 0px 16px;
+        background: linear-gradient(180deg, #fffce4, #fff5c0);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .card {
+        position: relative;
+        width: 300px;
+        height: 425px;
+        border: 10px solid var(--accent);
+        margin: 0px auto 0 auto;
+        box-shadow: inset 10px 0px 15px 0px rgba(0, 0, 0, 0.1);
+        background-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255),
+            rgba(255, 255, 255, 0.5)
+          ),
+          url("https://images.unsplash.com/photo-1527481138388-31827a7c94d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: transparent;
+      }
+
+      .card .text-container {
+        width: 80%;
+        height: 80%;
+        margin: auto;
+      }
+
+      .strikethrough {
+        text-decoration: line-through;
+      }
+
+      .card .text-container #head {
+        font-family: "Nobile", sans-serif;
+        font-size: 1.5em;
+        margin: 60px auto 60px auto;
+      }
+
+      .card p {
+        font-size: 1.1em;
+        line-height: 1.4;
+        font-family: "Nobile";
+        color: #331717;
+        font-style: italic;
+        text-align: center;
+        margin: 30px auto 0px auto;
+      }
+
+      .card .front {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        margin: -10px 0px 0px -10px;
+        border: 10px solid var(--accent);
+        backface-visibility: hidden;
+        background-color: var(--accent);
+        background-size: contain;
+        transform-style: preserve-3d;
+        transform-origin: 0% 50%;
+        transform: perspective(800px) rotateY(0deg);
+        transition: all 0.8s ease-in-out;
+      }
+
+      .card:hover .front {
+        transform: perspective(800px) rotateY(-170deg);
+        background-color: var(--accent2);
+      }
+
+      .card:hover .back {
+        transform: perspective(800px) rotateY(-170deg);
+        box-shadow: 7px 0px 5px 0px rgba(0, 0, 0, 0.3),
+          inset 2px 0px 15px 0px rgba(0, 0, 0, 0.1);
+        background-color: var(--wall);
+      }
+
+      .card .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 10px solid var(--accent);
+        margin: -10px 0px 0px -10px;
+        backface-visibility: visible;
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+        transform-style: preserve-3d;
+        transform-origin: 0% 50%;
+        transform: perspective(800px) rotateY(0deg);
+        transition: all 0.8s ease-in-out;
+        background-color: var(--floor);
+        box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
+      }
+      .card .front,
+      .card .back {
+        position: absolute;
+        width: calc(100% + 20px);
+        height: calc(100% + 20px);
+        /* ... giữ nguyên các thuộc tính khác ... */
+      }
+      .card-section {
+        /* Bỏ display: flex nếu không cần center strict, hoặc giữ và thêm min-height: 500px; */
+        display: block; /* Thử thay flex thành block để giống cardcolor.html hơn */
+        text-align: center;
+      }
+      .imgset {
+        position: relative;
+        z-index: 1;
+        margin-bottom: -215px;
+      }
+
+      .imgset img {
+        box-shadow: 0px 6px 11px 7px rgba(0, 0, 0, 0.22);
+        border-radius: 5px;
+      }
+
+      /* Responsive for card on mobile */
+      @media (max-width: 520px) {
+        .card-section {
+          padding: 20px 16px;
+        }
+        .card {
+          width: 280px;
+          height: 395px;
+        }
+        .card .text-container #head {
+          font-size: 1.3em;
+          margin: 50px auto 50px auto;
+        }
+        .card p {
+          font-size: 1em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="room-wrap">
+        <div class="room" id="room">
+          <div class="back wall">
+            <div class="backdrop"></div>
+            <div class="garland">
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+            </div>
+            <!-- THÊM: Đèn LED -->
+            <div class="led-light">
+              <div class="led" style="left: 10%"></div>
+              <div class="led" style="left: 20%"></div>
+              <div class="led" style="left: 30%"></div>
+              <div class="led" style="left: 50%"></div>
+              <div class="led" style="left: 70%"></div>
+              <div class="led" style="left: 80%"></div>
+            </div>
+            <div class="fairy-light"></div>
+
+          </div>
+          <div class="left wall">
+            <div class="backdrop"></div>
+            <div class="garland">
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+              <div class="flag"></div>
+            </div>
+            <div class="led-light">
+              <div class="led" style="left: 10%"></div>
+              <div class="led" style="left: 20%"></div>
+              <div class="led" style="left: 30%"></div>
+              <div class="led" style="left: 50%"></div>
+              <div class="led" style="left: 70%"></div>
+              <div class="led" style="left: 80%"></div>
+            </div>
+            <div class="fairy-light"></div>
+          </div>
+          <div class="floor"></div>
+
+          <div class="photo-carousel">
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/1.jpg"
+                alt="Ảnh 1"
+                title="Ảnh kỷ niệm 1"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+1'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/2.jpg"
+                alt="Ảnh 2"
+                title="Ảnh kỷ niệm 2"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+2'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/3.jpg"
+                alt="Ảnh 3"
+                title="Ảnh kỷ niệm 3"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+3'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/4.JPG"
+                alt="Ảnh 4"
+                title="Ảnh kỷ niệm 4"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+4'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/5.JPG"
+                alt="Ảnh 5"
+                title="Ảnh kỷ niệm 5"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+5'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/6.JPG"
+                alt="Ảnh 6"
+                title="Ảnh kỷ niệm 6"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+6'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/7.JPG"
+                alt="Ảnh 7"
+                title="Ảnh kỷ niệm 7"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+7'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/8.JPG"
+                alt="Ảnh 8"
+                title="Ảnh kỷ niệm 8"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+8'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/9.JPG"
+                alt="Ảnh 9"
+                title="Ảnh kỷ niệm 9"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+9'"
+              />
+            </div>
+            <div class="photo-frame">
+              <input type="file" accept="image/*" />
+              <img
+                src="images/10.JPG"
+                alt="Ảnh 10"
+                title="Ảnh kỷ niệm 10"
+                onerror="this.src='https://via.placeholder.com/200x180?text=Photo+10'"
+              />
+            </div>
+          </div>
+
+          <div class="banner">🎉 HAPPY BIRTHDAY 🎉</div>
+          <div class="cake" aria-hidden="true">
+            <div class="layer"></div>
+            <div
+              class="layer"
+              style="
+                width: 88px;
+                height: 28px;
+                margin-left: 16px;
+                background: #ffcf8b;
+              "
+            ></div>
+            <div class="cream"></div>
+            <div class="candle"></div>
+            <div class="flame"></div>
+          </div>
+          <div class="balloon b1">🎈</div>
+          <div class="balloon b2">💛</div>
+          <div class="balloon b3">🎈</div>
+          <div class="balloon b4">💖</div>
+          <div class="balloon b5">🍀</div>
+
+          <div class="flower f1"></div>
+          <div class="flower f2"></div>
+          <div class="flower f3"></div>
+          <div class="flower f4"></div>
+          <div class="flower f5"></div>
+          <div class="flower f6"></div>
+          <div class="firework" style="top: 20%; left: 40%"></div>
+          <div class="firework" style="top: 25%; right: 30%"></div>
+          <div class="firework" style="top: 18%; left: 60%"></div>
+          <!-- THÊM: Container cho pháo hoa nâng cao -->
+          <div class="firework-container" id="fireworkContainer"></div>
+
+          <!-- THÊM: Container cho confetti -->
+          <div id="confettiContainer"></div>
+
+          <!-- Sao lấp lánh -->
+          <div
+            class="sparkle"
+            style="top: 10%; left: 15%; animation-delay: 0s"
+          ></div>
+          <div
+            class="sparkle"
+            style="top: 15%; left: 70%; animation-delay: 0.3s"
+          ></div>
+          <div
+            class="sparkle"
+            style="top: 25%; right: 20%; animation-delay: 0.6s"
+          ></div>
+          <div
+            class="sparkle"
+            style="top: 35%; left: 80%; animation-delay: 0.9s"
+          ></div>
+          <div
+            class="sparkle"
+            style="top: 40%; right: 40%; animation-delay: 1.2s"
+          ></div>
+
+          <!-- Bong bóng nổi -->
+          <div
+            class="bubble"
+            style="
+              width: 20px;
+              height: 20px;
+              left: 10%;
+              bottom: 30%;
+              animation-delay: 0s;
+            "
+          ></div>
+          <div
+            class="bubble"
+            style="
+              width: 15px;
+              height: 15px;
+              left: 25%;
+              bottom: 40%;
+              animation-delay: 1s;
+            "
+          ></div>
+          <div
+            class="bubble"
+            style="
+              width: 25px;
+              height: 25px;
+              right: 15%;
+              bottom: 35%;
+              animation-delay: 2s;
+            "
+          ></div>
+          <div
+            class="bubble"
+            style="
+              width: 18px;
+              height: 18px;
+              right: 30%;
+              bottom: 45%;
+              animation-delay: 3s;
+            "
+          ></div>
+          <div class="light"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Section - Completely separated from the room -->
+    <div class="card-section">
+      <div class="card">
+        <div class="back"></div>
+        <div class="front">
+          <div class="imgset">
+            <img
+              width="100%"
+              src="https://1.bp.blogspot.com/-Mgj9-rbs65E/XfMoPSD5gtI/AAAAAAAAURk/NBokE2gSS2cTSJ2em5lZ5hJDuTtRN7UVwCLcBGAsYHQ/s1600/2713997.png"
+              alt="Hình ảnh chúc mừng sinh nhật"
+              title="Hình ảnh chúc mừng sinh nhật lộng lẫy"
+            />
+          </div>
+        </div>
+        <div class="text-container">
+          <p id="head">Happy Birthday அத்தான்!</p>
+          <p>
+            I hope your special day will bring you lots of happiness, love, and
+            fun. You deserve them a lot. Enjoy!
+          </p>
+          <p>Hope your day goes great!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button với aria-label và title để fix accessibility -->
+    <button
+      class="music"
+      id="musicBtn"
+      aria-label="Phát hoặc dừng nhạc nền sinh nhật"
+      title="Click để phát/dừng nhạc nền"
+    >
+      🎵 Nhạc
+    </button>
+
+    <!-- Thêm audio ở đây (đặt trước script) để script có thể truy xuất phần tử ngay khi chạy -->
+    <audio id="bgm" src="images/music.mp3" loop preload="auto"></audio>
+
+    <!-- JavaScript xử lý tương tác và hiệu ứng -->
+    <script>
+      // Lấy tham chiếu đến phòng 3D và khởi tạo các biến điều khiển
+      const room = document.getElementById("room");
+      let rotX = 10, // Góc xoay theo trục X
+        rotY = -45, // Góc xoay theo trục Y
+        zoom = 0; // Mức độ zoom
+      let dragging = false, // Trạng thái kéo
+        lastX = 0, // Vị trí chuột X cuối cùng
+        lastY = 0; // Vị trí chuột Y cuối cùng
+
+      // Áp dụng các giá trị transform cho phòng
+      function apply() {
+        // Giới hạn góc xoay
+        rotY = Math.max(-50, Math.min(50, rotY));
+        rotX = Math.max(-10, Math.min(45, rotX));
+        // Cập nhật transform 3D
+        room.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-20px) translateZ(${zoom}px)`;
+      }
+      apply(); // Áp dụng transform ban đầu
+
+      // Xử lý sự kiện bắt đầu kéo
+      room.addEventListener("pointerdown", (e) => {
+        dragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        room.setPointerCapture(e.pointerId); // Giữ con trỏ
+      });
+      window.addEventListener("pointerup", () => {
+        dragging = false;
+      });
+      window.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - lastX,
+          dy = e.clientY - lastY;
+        rotY += dx * 0.18;
+        rotX -= dy * 0.14;
+        apply();
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+
+      room.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          zoom += e.deltaY * 0.4;
+          zoom = Math.max(-600, Math.min(400, zoom));
+          apply();
+        },
+        { passive: false }
+      );
+
+      let pinch = null;
+      room.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.touches.length === 2) {
+            pinch = { d: distance(e.touches[0], e.touches[1]), z: zoom };
+          }
+        },
+        { passive: true }
+      );
+      room.addEventListener(
+        "touchmove",
+        (e) => {
+          if (e.touches.length === 2 && pinch) {
+            const d = distance(e.touches[0], e.touches[1]);
+            zoom = pinch.z + (pinch.d - d) * 0.9;
+            zoom = Math.max(-600, Math.min(400, zoom));
+            apply();
+          }
+        },
+        { passive: true }
+      );
+      room.addEventListener(
+        "touchend",
+        () => {
+          pinch = null;
+        },
+        { passive: true }
+      );
+      function distance(a, b) {
+        return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      }
+
+      // **FIX: Add check for input existence to avoid null error**
+      document.querySelectorAll(".frame, .photo-frame").forEach((frame) => {
+        const input = frame.querySelector("input[type=file]");
+        if (input) {
+          frame.addEventListener("click", () => input.click());
+          input.addEventListener("change", (e) => {
+            const f = e.target.files && e.target.files[0];
+            if (!f) return;
+            const url = URL.createObjectURL(f);
+            frame.innerHTML = `<img src="${url}" alt="Ảnh tùy chỉnh" title="Ảnh tùy chỉnh được tải lên">`;
+          });
+        }
+      });
+
+      // Simple audio play/pause toggler (kept minimal per user request)
+      (function () {
+        const musicBtn = document.getElementById("musicBtn");
+        const bgm = document.getElementById("bgm");
+        if (!musicBtn || !bgm) return;
+        musicBtn.addEventListener("click", () => {
+          if (bgm.paused) {
+            bgm.play();
+            musicBtn.textContent = "⏸️ Dừng";
+          } else {
+            bgm.pause();
+            musicBtn.textContent = "🎵 Nhạc";
+          }
+        });
+      })();
+
+      /* Hàm tạo hiệu ứng pháo hoa động */
+      function createFirework() {
+        const container = document.getElementById("fireworkContainer");
+        // Tạo một hạt pháo hoa mới
+        const firework = document.createElement("div");
+        firework.className = "firework-particle";
+        // Tính toán vị trí ngẫu nhiên
+        const x = Math.random() * 100; // Vị trí X (0-100%)
+        const y = Math.random() * 50; // Vị trí Y (0-50%)
+        // Tính hướng bay ngẫu nhiên
+        const dx = (Math.random() - 0.5) * 200; // Độ lệch X (-100 đến 100px)
+        const dy = (Math.random() - 0.5) * 200; // Độ lệch Y (-100 đến 100px)
+        // Thiết lập vị trí và hướng bay
+        firework.style.left = x + "%";
+        firework.style.top = y + "%";
+        firework.style.setProperty("--dx", dx + "px");
+        firework.style.setProperty("--dy", dy + "px");
+        // Thêm vào container và tự xóa sau 2s
+        container.appendChild(firework);
+        setTimeout(() => firework.remove(), 2000);
+      }
+      // Tạo pháo hoa mới mỗi 800ms
+      setInterval(createFirework, 800);
+
+      /* Hàm tạo hiệu ứng confetti rơi */
+      function createConfetti() {
+        const container = document.getElementById("confettiContainer");
+        // Tạo 5 mảnh confetti mỗi lần
+        for (let i = 0; i < 5; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          // Vị trí ngẫu nhiên theo chiều ngang
+          confetti.style.left = Math.random() * 100 + "%";
+          // Xen kẽ 2 màu chủ đạo
+          confetti.style.background =
+            Math.random() > 0.5 ? "var(--accent)" : "var(--accent2)";
+          // Thời gian bắt đầu rơi ngẫu nhiên
+          confetti.style.animationDelay = Math.random() * 3 + "s";
+          // Tốc độ rơi ngẫu nhiên
+          confetti.style.animationDuration = Math.random() * 2 + 2 + "s";
+          // Thêm vào container và tự xóa sau 5s
+          container.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 5000);
+        }
+      }
+      // Tạo confetti mới mỗi 3s
+      setInterval(createConfetti, 3000);
+
+      /* Tự động điều chỉnh kích thước cho màn hình nhỏ */
+      function autoScale() {
+        const wrap = document.querySelector(".room-wrap");
+        // Tính toán tỷ lệ thu nhỏ dựa trên chiều rộng màn hình
+        const scale = Math.min(window.innerWidth / 500, 1); // Tối đa 1x, nhỏ hơn sẽ thu nhỏ tương ứng
+        // Áp dụng tỷ lệ
+        wrap.style.transform = `scale(${scale})`;
+      }
+      // Theo dõi sự kiện thay đổi kích thước màn hình
+      window.addEventListener("resize", autoScale);
+      // Chạy lần đầu khi tải trang
+      autoScale();
+    </script>
+
+    <!-- audio đã được di chuyển lên phía trên nút và script -->
+  </body>
+</html>
