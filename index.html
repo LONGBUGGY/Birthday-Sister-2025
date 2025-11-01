@@ -626,39 +626,39 @@
       }
       /* Bóng bay bổ sung - Thêm nhiều hơn */
       .balloon.b3 {
-        left: 8%;
+        left: 2%;
         top: 35%;
         background: linear-gradient(180deg, #ffd700, #ffed4e);
         animation-delay: 1s;
       }
       .balloon.b4 {
-        right: 8%;
-        top: 40%;
+        right: 10%;
+        top: 50%;
         background: linear-gradient(180deg, #ff69b4, #ff1493);
         animation-delay: 1.5s;
       }
       .balloon.b5 {
-        left: 75%;
+        left: -35%;
         top: 25%;
         background: linear-gradient(180deg, #98fb98, #32cd32);
         animation-delay: 0.5s;
       }
       .balloon.b6 {
-        right: 75%;
+        right: -35%;
         top: 30%;
         background: linear-gradient(180deg, #ff1493, #ff69b4);
         animation-delay: 2s;
         animation-duration: 2.5s;
       }
       .balloon.b7 {
-        left: 30%;
+        left: -30%;
         top: 10%;
         background: linear-gradient(180deg, #a1c4fd, #c2e9fb);
         animation-delay: 0.8s;
       }
       /* Thêm bóng bay nữa */
       .balloon.b8 {
-        right: 30%;
+        right: -20%;
         top: 15%;
         background: linear-gradient(180deg, #ffd700, #ffed4e);
         animation-delay: 1.2s;
@@ -840,7 +840,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background-image: 
+        background-image:
           radial-gradient(circle at 5% 5%, rgba(247, 242, 74, 0.5) 1px, transparent 1px),
           radial-gradient(circle at 95% 95%, rgba(247, 211, 2, 0.5) 1px, transparent 1px),
           radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.3) 0.5px, transparent 0.5px),
@@ -1436,13 +1436,18 @@
           <div class="flower f5"></div>
           <div class="flower f6"></div>
           <!-- Thêm nhiều hoa hơn -->
-          <div class="flower f7" style="left: 20%; bottom: 30%; animation-delay: 0.5s;"></div>
-          <div class="flower f8" style="right: 20%; bottom: 35%; animation-delay: 1s;"></div>
-          <div class="flower f9" style="left: 40%; bottom: 25%; animation-delay: 1.5s;"></div>
-    
-          <div class="firework" style="top: 20%; left: 40%"></div>
-          <div class="firework" style="top: 25%; right: 30%"></div>
-          <div class="firework" style="top: 18%; left: 60%"></div>
+          <div
+            class="flower f7"
+            style="left: 20%; bottom: 30%; animation-delay: 0.5s"
+          ></div>
+          <div
+            class="flower f8"
+            style="right: 20%; bottom: 35%; animation-delay: 1s"
+          ></div>
+          <div
+            class="flower f9"
+            style="left: 40%; bottom: 25%; animation-delay: 1.5s"
+          ></div>
 
           <!-- THÊM: Container cho pháo hoa nâng cao -->
           <div class="firework-container" id="fireworkContainer"></div>
@@ -1574,33 +1579,71 @@
           <div class="light"></div>
 
           <!-- THÊM MỚI: Các kim cương bay lơ lửng - Thêm nhiều hơn, rơi từ trên -->
-          <div class="diamond" style="left: 20%; top: -20px; animation-delay: 0s;"></div>
-          <div class="diamond" style="left: 40%; top: -30px; animation-delay: 1s;"></div>
-          <div class="diamond" style="left: 60%; top: -25px; animation-delay: 2s;"></div>
-          <div class="diamond" style="left: 80%; top: -35px; animation-delay: 3s;"></div>
-          <div class="diamond" style="left: 10%; top: -15px; animation-delay: 4s;"></div>
-          <div class="diamond" style="left: 30%; top: -40px; animation-delay: 0.5s;"></div>
-          <div class="diamond" style="left: 50%; top: -20px; animation-delay: 1.5s;"></div>
-          <div class="diamond" style="left: 70%; top: -30px; animation-delay: 2.5s;"></div>
-          <div class="diamond" style="left: 90%; top: -25px; animation-delay: 3.5s;"></div>
+          <div
+            class="diamond"
+            style="left: 20%; top: -20px; animation-delay: 0s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 40%; top: -30px; animation-delay: 1s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 60%; top: -25px; animation-delay: 2s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 80%; top: -35px; animation-delay: 3s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 10%; top: -15px; animation-delay: 4s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 30%; top: -40px; animation-delay: 0.5s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 50%; top: -20px; animation-delay: 1.5s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 70%; top: -30px; animation-delay: 2.5s"
+          ></div>
+          <div
+            class="diamond"
+            style="left: 90%; top: -25px; animation-delay: 3.5s"
+          ></div>
 
           <!-- THÊM MỚI: Ribbons -->
-          <div class="ribbon" style="left: 10%; top: -10px; animation-delay: 0s;"></div>
-          <div class="ribbon" style="left: 30%; top: -20px; animation-delay: 1s;"></div>
-          <div class="ribbon" style="left: 50%; top: -15px; animation-delay: 2s;"></div>
-          <div class="ribbon" style="left: 70%; top: -25px; animation-delay: 3s;"></div>
-          <div class="ribbon" style="left: 90%; top: -30px; animation-delay: 4s;"></div>
-          <div class="ribbon" style="left: 5%; top: -5px; animation-delay: 0.5s;"></div>
+          <div
+            class="ribbon"
+            style="left: 10%; top: -10px; animation-delay: 0s"
+          ></div>
+          <div
+            class="ribbon"
+            style="left: 30%; top: -20px; animation-delay: 1s"
+          ></div>
+          <div
+            class="ribbon"
+            style="left: 50%; top: -15px; animation-delay: 2s"
+          ></div>
+          <div
+            class="ribbon"
+            style="left: 70%; top: -25px; animation-delay: 3s"
+          ></div>
+          <div
+            class="ribbon"
+            style="left: 90%; top: -30px; animation-delay: 4s"
+          ></div>
+          <div
+            class="ribbon"
+            style="left: 5%; top: -5px; animation-delay: 0.5s"
+          ></div>
 
           <!-- THÊM MỚI: Container cho star particles -->
           <div id="starContainer"></div>
-
-          <!-- THÊM MỚI: Big fireworks tĩnh -->
-          <div class="big-firework" style="top: 10%; left: 50%; animation-delay: 0s;"></div>
-          <div class="big-firework" style="top: 40%; right: 20%; animation-delay: 1s;"></div>
-          <div class="big-firework" style="top: 20%; left: 80%; animation-delay: 2s;"></div>
-          <div class="big-firework" style="top: 30%; right: 50%; animation-delay: 0.5s;"></div>
-          <div class="big-firework" style="top: 5%; left: 20%; animation-delay: 1.5s;"></div>
         </div>
       </div>
     </div>
@@ -1779,8 +1822,17 @@
           firework.style.setProperty("--dx", dx + "px");
           firework.style.setProperty("--dy", dy + "px");
           // Màu ngẫu nhiên
-          const colors = ['#fff4b8', '#f7d302', '#ff69b4', '#ffd700', '#98fb98', '#a1c4fd'];
-          firework.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, var(--accent2))`;
+          const colors = [
+            "#fff4b8",
+            "#f7d302",
+            "#ff69b4",
+            "#ffd700",
+            "#98fb98",
+            "#a1c4fd",
+          ];
+          firework.style.background = `radial-gradient(circle, ${
+            colors[Math.floor(Math.random() * colors.length)]
+          }, var(--accent2))`;
           // Thêm vào container và tự xóa sau 1s
           container.appendChild(firework);
           setTimeout(() => firework.remove(), 1000);
@@ -1799,8 +1851,14 @@
           // Vị trí ngẫu nhiên theo chiều ngang
           confetti.style.left = Math.random() * 100 + "%";
           // Xen kẽ màu
-          const colors = ['var(--accent)', 'var(--accent2)', '#ff69b4', '#ffd700'];
-          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          const colors = [
+            "var(--accent)",
+            "var(--accent2)",
+            "#ff69b4",
+            "#ffd700",
+          ];
+          confetti.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
           // Thời gian bắt đầu rơi ngẫu nhiên
           confetti.style.animationDelay = Math.random() * 1.5 + "s";
           // Tốc độ rơi ngẫu nhiên
@@ -1827,34 +1885,36 @@
       autoScale();
 
       // THÊM MỚI: Tương tác cho banner - Click để tạo confetti đặc biệt
-      document.querySelector('.banner').addEventListener('click', () => {
-        for (let i = 0; i < 50; i++) { // Tăng số lượng hơn
+      document.querySelector(".banner").addEventListener("click", () => {
+        for (let i = 0; i < 50; i++) {
+          // Tăng số lượng hơn
           setTimeout(() => createConfetti(), i * 30); // Nhanh hơn
         }
       });
 
       // THÊM MỚI: Tương tác cho cake - Click để "thổi nến" (tắt flame tạm thời)
-      document.querySelector('.cake').addEventListener('click', () => {
-        const flame = document.querySelector('.flame');
-        flame.style.animation = 'none';
-        flame.style.opacity = '0';
+      document.querySelector(".cake").addEventListener("click", () => {
+        const flame = document.querySelector(".flame");
+        flame.style.animation = "none";
+        flame.style.opacity = "0";
         setTimeout(() => {
-          flame.style.animation = '';
-          flame.style.opacity = '1';
+          flame.style.animation = "";
+          flame.style.opacity = "1";
         }, 500); // Nhanh hơn
         // Tạo pháo hoa đặc biệt khi thổi nến
-        for (let i = 0; i < 15; i++) { // Tăng số lượng hơn
+        for (let i = 0; i < 15; i++) {
+          // Tăng số lượng hơn
           setTimeout(() => createFirework(), i * 50); // Nhanh hơn
         }
       });
 
       // THÊM MỚI: Tạo kim cương bay liên tục - Dày đặc hơn
       function createDiamond() {
-        const diamond = document.createElement('div');
-        diamond.className = 'diamond';
-        diamond.style.left = Math.random() * 100 + '%';
-        diamond.style.animationDelay = Math.random() * 2 + 's';
-        document.getElementById('room').appendChild(diamond);
+        const diamond = document.createElement("div");
+        diamond.className = "diamond";
+        diamond.style.left = Math.random() * 100 + "%";
+        diamond.style.animationDelay = Math.random() * 2 + "s";
+        document.getElementById("room").appendChild(diamond);
         setTimeout(() => diamond.remove(), 3000);
       }
       setInterval(createDiamond, 400); // Tăng tần suất hơn
@@ -1862,7 +1922,8 @@
       // THÊM MỚI: Tạo star particles - Dày đặc hơn
       function createStarShower() {
         const container = document.getElementById("starContainer");
-        for (let i = 0; i < 12; i++) { // Nhiều sao hơn
+        for (let i = 0; i < 12; i++) {
+          // Nhiều sao hơn
           const star = document.createElement("div");
           star.className = "star-particle";
           star.style.left = Math.random() * 100 + "%";
@@ -1876,11 +1937,11 @@
 
       // THÊM MỚI: Tạo ribbons liên tục - Dày đặc hơn
       function createRibbon() {
-        const ribbon = document.createElement('div');
-        ribbon.className = 'ribbon';
-        ribbon.style.left = Math.random() * 100 + '%';
-        ribbon.style.animationDelay = Math.random() * 3 + 's';
-        document.getElementById('room').appendChild(ribbon);
+        const ribbon = document.createElement("div");
+        ribbon.className = "ribbon";
+        ribbon.style.left = Math.random() * 100 + "%";
+        ribbon.style.animationDelay = Math.random() * 3 + "s";
+        document.getElementById("room").appendChild(ribbon);
         setTimeout(() => ribbon.remove(), 4000);
       }
       setInterval(createRibbon, 500); // Mỗi 0.5s
@@ -1888,7 +1949,8 @@
       // THÊM MỚI: Tạo tuyết rơi toàn màn hình
       function createSnow() {
         const container = document.getElementById("snowContainer");
-        for (let i = 0; i < 20; i++) { // Nhiều tuyết hơn
+        for (let i = 0; i < 20; i++) {
+          // Nhiều tuyết hơn
           const snow = document.createElement("div");
           snow.className = "snowflake";
           snow.style.left = Math.random() * 100 + "%";
@@ -1905,12 +1967,20 @@
       // THÊM MỚI: Tạo confetti toàn màn hình
       function createGlobalConfetti() {
         const container = document.getElementById("globalConfettiContainer");
-        for (let i = 0; i < 15; i++) { // Nhiều hơn
+        for (let i = 0; i < 15; i++) {
+          // Nhiều hơn
           const confetti = document.createElement("div");
           confetti.className = "global-confetti";
           confetti.style.left = Math.random() * 100 + "%";
-          const colors = ['var(--accent)', 'var(--accent2)', '#ff69b4', '#ffd700', '#98fb98'];
-          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          const colors = [
+            "var(--accent)",
+            "var(--accent2)",
+            "#ff69b4",
+            "#ffd700",
+            "#98fb98",
+          ];
+          confetti.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
           confetti.style.animationDelay = Math.random() * 4 + "s";
           confetti.style.animationDuration = Math.random() * 2 + 3 + "s";
           container.appendChild(confetti);
